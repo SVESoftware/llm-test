@@ -51,12 +51,11 @@ def build_conversational_retrieval_qa(llm, prompt, vectordb):
     memory = ConversationBufferMemory(input_key="question", memory_key="history")
     dbqa = RetrievalQA.from_chain_type(llm=llm,
                                        chain_type='stuff',
-                                       verbose=True,
                                        retriever=vectordb.as_retriever(search_kwargs={'k': cfg.VECTOR_COUNT}),
                                        return_source_documents=cfg.RETURN_SOURCE_DOCUMENTS,
-                                       chain_type_kwargs={'prompt': prompt, "memory": memory, 'verbose':True}
+                                       chain_type_kwargs={'prompt': prompt, "memory": memory, 'verbose':cfg.VERBOSE}
                                        )
-    return dbqa
+    return dbqa, memory
 
 
 def setup_dbqa():
@@ -75,6 +74,6 @@ def setup_c_dbqa():
     vectordb = FAISS.load_local(cfg.DB_FAISS_PATH, embeddings)
     llm = build_llm()
     qa_prompt = set_conversational_qa_prompt()
-    dbqa = build_conversational_retrieval_qa(llm, qa_prompt, vectordb)
+    dbqa, memory = build_conversational_retrieval_qa(llm, qa_prompt, vectordb)
 
-    return dbqa
+    return dbqa, memory

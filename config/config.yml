@@ -10,3 +10,4 @@ MODEL_TYPE: 'llama'
 MODEL_BIN_PATH: 'models/llama-2-7b-chat.ggmlv3.q8_0.bin'
 MAX_NEW_TOKENS: 4096 # 200 # 3000
 TEMPERATURE: 0.2 #0.01 # 0.2
+VERBOSE: False
