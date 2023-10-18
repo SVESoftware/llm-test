@@ -1,6 +1,8 @@
 # GGML Models
 models/*.bin
 
+vectorstore/
+
 # PPT decks
 *.pptx
 
