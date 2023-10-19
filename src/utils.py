@@ -7,12 +7,12 @@ import box
 import yaml
 
 from langchain import PromptTemplate
-from langchain.chains import RetrievalQA
+from langchain.chains import RetrievalQA, ConversationChain
 
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
-from src.prompts import qa_template, custom_template, QA_PROMPT_HISTORY
-from src.llm import build_llm
+from src.prompts import qa_template, custom_template, QA_PROMPT_HISTORY, QA_PROMPT_NEW, QA_PROMPT_HISTORY_NEW, QA_PROMPT_MISTRAL
+from src.llm import build_llm, build_c_llm
 
 from langchain.memory import ConversationBufferMemory
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
@@ -33,7 +33,7 @@ def set_qa_prompt():
 def set_conversational_qa_prompt():
     """
     """
-    prompt = QA_PROMPT_HISTORY
+    prompt = QA_PROMPT_MISTRAL
     return prompt
 
 
@@ -48,13 +48,19 @@ def build_retrieval_qa(llm, prompt, vectordb):
 
 def build_conversational_retrieval_qa(llm, prompt, vectordb):
 
-    memory = ConversationBufferMemory(input_key="question", memory_key="history")
-    dbqa = RetrievalQA.from_chain_type(llm=llm,
+
+    """dbqa = RetrievalQA.from_chain_type(llm=llm,
                                        chain_type='stuff',
-                                       retriever=vectordb.as_retriever(search_kwargs={'k': cfg.VECTOR_COUNT}),
-                                       return_source_documents=cfg.RETURN_SOURCE_DOCUMENTS,
+                                       #retriever=vectordb.as_retriever(search_kwargs={'k': cfg.VECTOR_COUNT}),
+                                       #return_source_documents=cfg.RETURN_SOURCE_DOCUMENTS,
                                        chain_type_kwargs={'prompt': prompt, "memory": memory, 'verbose':cfg.VERBOSE}
                                        )
+    """
+    memory = ConversationBufferMemory()
+    dbqa = ConversationChain(
+    llm=llm, verbose=cfg.VERBOSE, prompt=prompt, memory=memory)
+
+
     return dbqa, memory
 
 
@@ -68,11 +74,17 @@ def setup_dbqa():
 
     return dbqa
 
-def setup_c_dbqa():
+def setup_conversational_dbqa():
+    #encode_kwargs = {'normalize_embeddings': True}
+    # encode_kwargs = {}
+
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
                                        model_kwargs={'device': 'cpu'})
+
     vectordb = FAISS.load_local(cfg.DB_FAISS_PATH, embeddings)
-    llm = build_llm()
+
+    llm = build_c_llm()
+    print('llm', llm)
     qa_prompt = set_conversational_qa_prompt()
     dbqa, memory = build_conversational_retrieval_qa(llm, qa_prompt, vectordb)
 

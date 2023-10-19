@@ -4,7 +4,7 @@ import yaml
 import argparse
 import logging
 from dotenv import find_dotenv, load_dotenv
-from src.utils import setup_c_dbqa
+from src.utils import setup_c_dbqa, setup_dbqa
 
 # Load environment variables from .env file
 load_dotenv(find_dotenv())
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     start = timeit.default_timer()
 
     # Setup DBQA
-    qa, memory = setup_c_dbqa()
+    qa = setup_c_dbqa()
 
     print(f"Running on: CPU")
     print(f"Display Source Documents set to: FALSE")
@@ -36,9 +36,8 @@ if __name__ == "__main__":
         #    query = query + "?"
         #print(f"Query: {query}")
         # Get the answer from the chain
-        res = qa(query)
 
-        response = qa({'query': query})
-        print(f'\nAnswer: {response["result"]}')
+        response = qa({'input': query})
+        print(f'\nAnswer: {response}')
         end = timeit.default_timer()
         print(f"Time to answer: {end - start:.2f} s")

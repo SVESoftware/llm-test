@@ -15,7 +15,7 @@ with open('config/config.yml', 'r', encoding='utf8') as ymlfile:
 
 # Build vector database
 def run_db_build():
-    """
+
     loader = DirectoryLoader(cfg.DATA_PATH,
                              glob='*.pdf',
                              loader_cls=PyPDFLoader)
@@ -25,6 +25,7 @@ def run_db_build():
                              glob='*.txt',
                              loader_cls=TextLoader)
     documents = loader.load()
+    """
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=cfg.CHUNK_SIZE,
                                                    chunk_overlap=cfg.CHUNK_OVERLAP)

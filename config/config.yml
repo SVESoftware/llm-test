@@ -1,13 +1,14 @@
-RETURN_SOURCE_DOCUMENTS: False
+RETURN_SOURCE_DOCUMENTS: True
 VECTOR_COUNT: 2
 CHUNK_SIZE: 500
 CHUNK_OVERLAP: 50
 DATA_PATH: 'data/'
 DB_FAISS_PATH: 'vectorstore/db_faiss'
-# MODEL_TYPE: 'mpt'
-# MODEL_BIN_PATH: 'models/mpt-7b-instruct.ggmlv3.q8_0.bin'
+MODEL_BIN_PATH: './models/mistral/mistral-7b-instruct-v0.1.Q5_K_M.gguf'
 MODEL_TYPE: 'llama'
-MODEL_BIN_PATH: 'models/llama-2-7b-chat.ggmlv3.q8_0.bin'
-MAX_NEW_TOKENS: 4096 # 200 # 3000
+#MODEL_TYPE: 'mistral'
+#MODEL_BIN_PATH: 'models/llama-2-7b-chat.ggmlv3.q8_0.bin'
+MAX_NEW_TOKENS: 256 # 200 # 3000
 TEMPERATURE: 0.2 #0.01 # 0.2
 VERBOSE: False
+THREADS: 8
