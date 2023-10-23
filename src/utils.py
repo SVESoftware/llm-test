@@ -78,7 +78,7 @@ def setup_conversational_dbqa():
     #encode_kwargs = {'normalize_embeddings': True}
     # encode_kwargs = {}
 
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
+    embeddings = HuggingFaceEmbeddings(model_name="./models/all-MiniLM-L6-v2",
                                        model_kwargs={'device': 'cpu'})
 
     vectordb = FAISS.load_local(cfg.DB_FAISS_PATH, embeddings)
