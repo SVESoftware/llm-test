@@ -3,13 +3,15 @@
 # =========================
 import box
 import yaml
+import os
 from langchain.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import PyPDFLoader, DirectoryLoader, TextLoader
+from langchain.document_loaders import PyPDFLoader, DirectoryLoader, TextLoader, PDFMinerLoader
 from langchain.embeddings import HuggingFaceEmbeddings
 
 # Import config vars
-with open('config/config.yml', 'r', encoding='utf8') as ymlfile:
+CONFIG_FILE = os.environ.get('CONFIG_FILE', 'config/config.yml')
+with open(CONFIG_FILE, 'r', encoding='utf8') as ymlfile:
     cfg = box.Box(yaml.safe_load(ymlfile))
 
 
@@ -18,7 +20,7 @@ def run_db_build():
 
     loader = DirectoryLoader(cfg.DATA_PATH,
                              glob='*.pdf',
-                             loader_cls=PyPDFLoader)
+                             loader_cls=PDFMinerLoader)
     documents = loader.load()
     """
     loader = DirectoryLoader(cfg.DATA_PATH,
@@ -31,7 +33,11 @@ def run_db_build():
                                                    chunk_overlap=cfg.CHUNK_OVERLAP)
     texts = text_splitter.split_documents(documents)
 
-    embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2',
+    if cfg.INTERNET:
+        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
+                                        model_kwargs={'device': 'cpu'})
+    else:
+        embeddings = HuggingFaceEmbeddings(model_name="./models/all-MiniLM-L6-v2",
                                        model_kwargs={'device': 'cpu'})
 
     vectorstore = FAISS.from_documents(texts, embeddings)

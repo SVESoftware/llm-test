@@ -1,0 +1,16 @@
+RETURN_SOURCE_DOCUMENTS: True
+VECTOR_COUNT: 2
+CHUNK_SIZE: 500
+CHUNK_OVERLAP: 50
+DATA_PATH: 'data/'
+DB_FAISS_PATH: 'vectorstore/db_faiss'
+MODEL_BIN_PATH: './models/mistral/mistral-7b-instruct-v0.1.Q5_K_M.gguf'
+MODEL_TYPE: 'mistral'
+#MODEL_BIN_PATH: 'models/llama-2-7b-chat.ggmlv3.q8_0.bin'
+MAX_NEW_TOKENS: 512 # 200 # 3000
+TEMPERATURE: 0.2 #0.01 # 0.2
+VERBOSE: True
+THREADS: 4
+INTERNET: True
+PROMPT: 'chat_mistral'
+GPU: True

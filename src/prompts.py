@@ -11,10 +11,11 @@ from langchain.prompts.prompt import PromptTemplate
 qa_template = """Use the following pieces of information to answer the user's question.
 If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
+
 Context: {context}
 Question: {question}
 
-Only return the helpful answer below and nothing else.
+Only return the helpful answer below in Croatian language and nothing else.
 Helpful answer:
 """
 
@@ -27,7 +28,7 @@ Standalone question:"""
 
 system_prompt = """You are a helpful assistant, you will use the provided context to answer user questions.
 Read the given context before answering questions and think step by step. If you can not answer a user question based on
-the provided context, inform the user. Do not use any other information for answering user. Provide a detailed answer to the question."""
+the provided context, inform the user. Do not use any other information for answering user. Provide a detailed answer to the question in Croatian language."""
 
 system_prompt_2 = """Given the following context and chat history, answer the user's question.
 If you don't know the answer, just say that you don't know, don't try to make up an answer."""
@@ -39,14 +40,22 @@ SYSTEM_PROMPT = B_SYS + system_prompt + E_SYS
 SYSTEM_PROMPT_2 = B_SYS + system_prompt_2 + E_SYS
 
 instruction = """
-Context: {history} \n {context}
+Context: {chat_history} \n {context}
 User question: {question}
-Only return the helpful answer below on original language and nothing else.
+Only return the helpful answer below in Croatian language and nothing else.
 Helpful answer:"""
 
 prompt_template = B_INST + SYSTEM_PROMPT + instruction + E_INST
-QA_PROMPT_HISTORY = PromptTemplate(input_variables=["history", "context", "question"], template=prompt_template)
+QA_PROMPT_LLAMA2_HISTORY = PromptTemplate(input_variables=["chat_history", "context", "question"], template=prompt_template)
 
+instruction = """
+Context: {context}
+User question: {question}
+Only return the helpful answer below in Croatian language and nothing else.
+Helpful answer:"""
+
+prompt_template = B_INST + SYSTEM_PROMPT + instruction + E_INST
+QA_PROMPT_LLAMA2 = PromptTemplate(input_variables=["context", "question"], template=prompt_template)
 
 instruction = """
 Context: {context}
@@ -70,11 +79,30 @@ prompt_template = B_INST + SYSTEM_PROMPT_2 + instruction + E_INST
 QA_PROMPT_HISTORY_NEW = PromptTemplate(input_variables=["history", "context", "question"], template=prompt_template)
 
 B = "<s>"
+E = "</s>"
 
 instruction = """{history}
 {input}
 """
 
-prompt_template = B + B_INST + instruction + E_INST
+prompt_template = B + instruction + E
 
 QA_PROMPT_MISTRAL = PromptTemplate(input_variables=["input", "history"], template=prompt_template)
+
+B = "<s>"
+E = "</s>"
+
+instruction = """Using this information: {context}
+Answer this question in Croatian language: {question}
+"""
+
+prompt_template = B + B_INST + instruction + E_INST + E
+
+QA_PROMPT_MISTRAL_QA = PromptTemplate(input_variables=["question", "context"], template=prompt_template)
+
+PROMPTS = {
+    'chat_mistral': QA_PROMPT_MISTRAL,
+    'qa_llama': QA_PROMPT_LLAMA2,
+    'qa_llama_history': QA_PROMPT_LLAMA2_HISTORY,
+    'qa_mistral': QA_PROMPT_MISTRAL_QA
+}
